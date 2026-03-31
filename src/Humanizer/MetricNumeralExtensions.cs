@@ -387,15 +387,17 @@ public static class MetricNumeralExtensions
         var exponent = (int)Math.Floor(Math.Log10(Math.Abs(input)) / 3);
 
         if (!exponent.Equals(0))
-        {
             return BuildMetricRepresentation(input, exponent, formats, decimals);
+
+        if (decimals.HasValue)
+        {
+            input = Math.Round(input, decimals.Value);
+
+            if (Math.Abs(input) >= 1000)
+                return BuildMetricRepresentation(input, exponent: 1, formats, decimals);
         }
 
-        var representation = decimals.HasValue
-            ? Math
-                .Round(input, decimals.Value)
-                .ToString()
-            : input.ToString();
+        var representation = input.ToString();
         var space = (formats & MetricNumeralFormats.WithSpace) == MetricNumeralFormats.WithSpace ? " " : string.Empty;
         return representation + space;
     }

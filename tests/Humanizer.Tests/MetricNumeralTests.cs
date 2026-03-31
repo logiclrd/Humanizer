@@ -212,4 +212,20 @@ public class MetricNumeralTests
     [InlineData(-1E-27)]
     public void ToMetricOnInvalid(double input) =>
         Assert.Throws<ArgumentOutOfRangeException>(() => input.ToMetric());
+
+    [Theory]
+    [InlineData(999.9, "1k")]
+    [InlineData(999_999.9, "1M")]
+    [InlineData(999_999_999.9, "1G")]
+    [InlineData(999_999_999_999.9, "1T")]
+    [InlineData(-999.9, "-1k")]
+    [InlineData(-999_999.9, "-1M")]
+    [InlineData(-999_999_999.9, "-1G")]
+    [InlineData(-999_999_999_999.9, "-1T")]
+    public void ToMetricWithScaleChangeDueToRounding(double value, string expected)
+    {
+        var result = value.ToMetric(decimals: 0);
+
+        Assert.Equal(expected, result);
+    }
 }
